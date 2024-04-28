@@ -23,6 +23,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.LogoRenderer;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -924,6 +925,8 @@ public class CatalogueModListScreen extends Screen
 
     private class StringList extends AbstractSelectionList<StringEntry>
     {
+        private String description = "";
+
         public StringList(int width, int height, int left, int top)
         {
             super(CatalogueModListScreen.this.minecraft, width, height, top, 10);
@@ -933,6 +936,7 @@ public class CatalogueModListScreen extends Screen
 
         public void setTextFromInfo(IModData data)
         {
+            this.description = data.getDescription();
             this.clearEntries();
             this.visible = true;
             if(data.getDescription().trim().isBlank())
@@ -1007,7 +1011,7 @@ public class CatalogueModListScreen extends Screen
         @Override
         protected void updateWidgetNarration(NarrationElementOutput output)
         {
-
+            output.add(NarratedElementType.TITLE, Component.literal(this.description));
         }
     }
 

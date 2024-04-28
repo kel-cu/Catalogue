@@ -7,6 +7,8 @@ import com.mrcrayfish.catalogue.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -52,5 +54,24 @@ public class CatalogueIconButton extends Button
         int textColor = 0xFFFFFF | Mth.ceil(this.alpha * 255.0F) << 24;
         graphics.drawString(minecraft.font, this.label, iconX + 14, iconY + 1, textColor);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void updateWidgetNarration(NarrationElementOutput output)
+    {
+        output.add(NarratedElementType.TITLE, this.createNarration.createNarrationMessage(() -> {
+            return wrapDefaultNarrationMessage(this.label);
+        }));
+        if(this.active)
+        {
+            if(this.isFocused())
+            {
+                output.add(NarratedElementType.USAGE, Component.translatable("narration.button.usage.focused"));
+            }
+            else
+            {
+                output.add(NarratedElementType.USAGE, Component.translatable("narration.button.usage.hovered"));
+            }
+        }
     }
 }

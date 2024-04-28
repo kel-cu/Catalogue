@@ -495,11 +495,23 @@ public class CatalogueModListScreen extends Screen
                 }
             }
 
+            int scale = 1;
+            if(logoResource == MISSING_BANNER)
+            {
+                Pair<ResourceLocation, Dimension> logoInfo = IMAGE_ICON_CACHE.get(this.selectedModData.getModId());
+                if(logoInfo.getLeft() != null)
+                {
+                    logoResource = logoInfo.getLeft();
+                    size = logoInfo.getRight();
+                    scale = 10; // Hack to make icon fill max banner height
+                }
+            }
+
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.enableBlend();
 
-            int width = size.width;
-            int height = size.height;
+            int width = size.width * scale;
+            int height = size.height * scale;
             if(size.width > maxWidth)
             {
                 width = maxWidth;

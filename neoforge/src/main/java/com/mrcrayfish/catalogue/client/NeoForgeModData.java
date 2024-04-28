@@ -81,6 +81,10 @@ public class NeoForgeModData implements IModData
     @Override
     public String getLicense()
     {
+        if(this.info.getModId().equals("minecraft"))
+        {
+            return "All Rights Reserved";
+        }
         return this.info.getOwningFile().getLicense();
     }
 
@@ -94,6 +98,10 @@ public class NeoForgeModData implements IModData
     @Override
     public String getAuthors()
     {
+        if(this.info.getModId().equals("minecraft"))
+        {
+            return "Mojang AB";
+        }
         return this.getConfigString("authors");
     }
 

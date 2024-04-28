@@ -21,6 +21,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.LogoRenderer;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
@@ -90,6 +91,7 @@ public class CatalogueModListScreen extends Screen
         if(!loaded)
         {
             ClientServices.PLATFORM.getAllModData().forEach(data -> CACHED_MODS.put(data.getModId(), data));
+            CACHED_MODS.put("minecraft", new MinecraftModData()); // Override minecraft
             loaded = true;
         }
     }
@@ -141,8 +143,9 @@ public class CatalogueModListScreen extends Screen
             this.openLink(this.selectedModData.getIssueTracker());
         }));
         this.issueButton.visible = false;
-        this.descriptionList = new StringList(contentWidth, 50, contentLeft, 130);
+        this.descriptionList = new StringList(contentWidth + padding * 2, 50, contentLeft - padding, 130);
         this.descriptionList.setRenderHeader(false, 0);
+        this.descriptionList.visible = false;
         //this.descriptionList.setRenderBackground(false); // TODO what appened
         this.addWidget(this.descriptionList);
 
@@ -330,16 +333,22 @@ public class CatalogueModListScreen extends Screen
                 }
             }
 
-            int labelOffset = this.height - 20;
+            // Draw fade from the bottom
+            graphics.fillGradient(listRight + 12, this.height - 50, this.width, this.height, 0x00000000, 0x66000000);
+
+            int labelOffset = this.height - 18;
 
             // Draw license
             String license = this.selectedModData.getLicense();
-            this.drawStringWithLabel(graphics, "catalogue.gui.licenses", license, contentLeft, labelOffset, contentWidth, mouseX, mouseY, ChatFormatting.GRAY, ChatFormatting.WHITE);
-            labelOffset -= 15;
+            if(!license.isBlank())
+            {
+                this.drawStringWithLabel(graphics, "catalogue.gui.licenses", license, contentLeft, labelOffset, contentWidth, mouseX, mouseY, ChatFormatting.GRAY, ChatFormatting.WHITE);
+                labelOffset -= 15;
+            }
 
             // Draw credits
             String credits = this.selectedModData.getCredits();
-            if(credits != null)
+            if(credits != null && !credits.isBlank())
             {
                 this.drawStringWithLabel(graphics, ClientServices.COMPONENT.getCreditsKey(), credits, contentLeft, labelOffset, contentWidth, mouseX, mouseY, ChatFormatting.GRAY, ChatFormatting.WHITE);
                 labelOffset -= 15;
@@ -347,7 +356,7 @@ public class CatalogueModListScreen extends Screen
 
             // Draw authors
             String authors = this.selectedModData.getAuthors();
-            if(authors != null)
+            if(authors != null && !authors.isBlank())
             {
                 this.drawStringWithLabel(graphics, "catalogue.gui.authors", authors, contentLeft, labelOffset, contentWidth, mouseX, mouseY, ChatFormatting.GRAY, ChatFormatting.WHITE);
             }
@@ -443,7 +452,7 @@ public class CatalogueModListScreen extends Screen
         int contentWidth = this.width - contentLeft - 10;
         int labelCount = this.getLabelCount(data);
         this.descriptionList.setWidth(contentWidth);
-        this.descriptionList.setHeight(this.height - 135 - 20 - labelCount * 15);
+        this.descriptionList.setHeight(this.height - 135 - labelCount * 15 - 9);
         this.descriptionList.setX(contentLeft);
         this.descriptionList.setTextFromInfo(data);
         this.descriptionList.setScrollAmount(0);
@@ -483,7 +492,7 @@ public class CatalogueModListScreen extends Screen
         if(this.selectedModData != null)
         {
             ResourceLocation logoResource = MISSING_BANNER;
-            Dimension size = new Dimension(600, 120);
+            Dimension size = new Dimension(120, 120);
 
             if(BANNER_CACHE.containsKey(this.selectedModData.getModId()))
             {
@@ -507,6 +516,14 @@ public class CatalogueModListScreen extends Screen
                 }
             }
 
+            boolean offset = false;
+            if(this.selectedModData.getModId().equals("minecraft"))
+            {
+                logoResource = LogoRenderer.MINECRAFT_LOGO;
+                size = new Dimension(1024, 256);
+                offset = true;
+            }
+
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.enableBlend();
 
@@ -525,6 +542,11 @@ public class CatalogueModListScreen extends Screen
 
             x += (contentWidth - width) / 2;
             y += (maxHeight - height) / 2;
+
+            if(offset) // Fix for minecraft logo
+            {
+                y += 8;
+            }
 
             graphics.blit(logoResource, x, y, width, height, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
 
@@ -912,6 +934,12 @@ public class CatalogueModListScreen extends Screen
         public void setTextFromInfo(IModData data)
         {
             this.clearEntries();
+            this.visible = true;
+            if(data.getDescription().trim().isBlank())
+            {
+                this.visible = false;
+                return;
+            }
             CatalogueModListScreen.this.font.getSplitter().splitLines(data.getDescription().trim(), this.getRowWidth(), Style.EMPTY).forEach(text -> {
                 this.addEntry(new StringEntry(text.getString().replace("\n", "").replace("\r", "").trim()));
             });
@@ -935,13 +963,25 @@ public class CatalogueModListScreen extends Screen
         @Override
         public int getRowLeft()
         {
-            return this.getX();
+            return this.getX() + 8;
         }
 
         @Override
         public int getRowWidth()
         {
-            return this.width - 10;
+            return this.width - 16;
+        }
+
+        @Override
+        protected int getRowTop(int $$0)
+        {
+            return super.getRowTop($$0) + 4;
+        }
+
+        @Override
+        public int getMaxScroll()
+        {
+            return Math.max(0, this.getMaxPosition() - (this.height - 12));
         }
 
         @Override
@@ -950,6 +990,18 @@ public class CatalogueModListScreen extends Screen
             graphics.enableScissor(this.getX(), this.getY(), this.getRight(), this.getBottom());
             super.renderWidget(graphics, mouseX, mouseY, partialTicks);
             graphics.disableScissor();
+        }
+
+        @Override
+        protected void renderListBackground(GuiGraphics graphics)
+        {
+            int x = this.getX();
+            int y = this.getY();
+            int width = this.getWidth();
+            int height = this.getHeight();
+            graphics.fill(x, y + 1, x + 1, y + height - 1, 0x77000000);
+            graphics.fill(x + 1, y, x + width - 1, y + height, 0x77000000);
+            graphics.fill(x + width - 1, y + 1, x + width, y + height - 1, 0x77000000);
         }
 
         @Override

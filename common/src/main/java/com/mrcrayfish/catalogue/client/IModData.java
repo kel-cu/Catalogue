@@ -49,6 +49,7 @@ public interface IModData
     @Nullable
     String getBackground();
 
+    @Nullable
     Update getUpdate();
 
     boolean hasConfig();

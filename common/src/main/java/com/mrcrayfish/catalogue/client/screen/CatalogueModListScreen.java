@@ -103,7 +103,7 @@ public class CatalogueModListScreen extends Screen
     protected void init()
     {
         super.init();
-        this.searchTextField = new EditBox(this.font, 11, 25, 148, 20, CommonComponents.EMPTY);
+        this.searchTextField = new EditBox(this.font, 10, 25, 150, 20, CommonComponents.EMPTY);
         this.searchTextField.setResponder(s -> {
             this.updateSearchField(s);
             this.modList.filterAndUpdateList(s);
@@ -142,7 +142,7 @@ public class CatalogueModListScreen extends Screen
         this.issueButton.visible = false;
         this.descriptionList = new StringList(contentWidth, 50, contentLeft, 130);
         this.descriptionList.setRenderHeader(false, 0);
-        this.descriptionList.setRenderBackground(false);
+        //this.descriptionList.setRenderBackground(false); // TODO what appened
         this.addWidget(this.descriptionList);
 
         this.updatesButton = this.addRenderableWidget(new CatalogueCheckBoxButton(this.modList.getRight() - 14, 7, button -> {
@@ -639,8 +639,8 @@ public class CatalogueModListScreen extends Screen
     {
         public ModList()
         {
-            super(CatalogueModListScreen.this.minecraft, 150, CatalogueModListScreen.this.height - 35 - 46, 46, 26);
-            this.setRenderBackground(false);
+            super(CatalogueModListScreen.this.minecraft, 150, CatalogueModListScreen.this.height - 35 - 45, 45, 26);
+            //this.setRenderBackground(false); TODO what appened
         }
 
         @Override
@@ -662,9 +662,15 @@ public class CatalogueModListScreen extends Screen
         }
 
         @Override
+        public int getRowRight()
+        {
+            return this.getRowLeft() + this.getRowWidth();
+        }
+
+        @Override
         public int getRowWidth()
         {
-            return this.width;
+            return this.width - (this.scrollbarVisible() ? 6 : 0);
         }
 
         public void filterAndUpdateList(String text)
@@ -692,9 +698,20 @@ public class CatalogueModListScreen extends Screen
         public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
         {
             graphics.setColor(0.125F, 0.125F, 0.125F, 1.0F);
-            graphics.blit(Screen.BACKGROUND_LOCATION, this.getX(), this.getY(), this.getRight(), this.getBottom() + (int) this.getScrollAmount(), this.width, this.height, 32, 32);
+            // TODO what appened
+            //graphics.blit(Screen.BACKGROUND_LOCATION, this.getX(), this.getY(), this.getRight(), this.getBottom() + (int) this.getScrollAmount(), this.width, this.height, 32, 32);
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             super.renderWidget(graphics, mouseX, mouseY, partialTicks);
+        }
+
+        @Override
+        protected void renderListSeparators(GuiGraphics graphics) {}
+
+        @Override
+        protected void renderSelection(GuiGraphics graphics, int rowTop, int rowStart, int rowBottom, int outlineColour, int backgroundColour)
+        {
+            graphics.fill(this.getRowLeft(), rowTop - 2, this.getRowRight(), rowTop + rowBottom + 2, outlineColour);
+            graphics.fill(this.getRowLeft() + 1, rowTop - 1, this.getRowRight() - 1, rowTop + rowBottom + 1, backgroundColour);
         }
 
         @Override
@@ -754,7 +771,7 @@ public class CatalogueModListScreen extends Screen
 
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.enableBlend();
-                graphics.blit(logoResource, left + 4, top + 2, 16, 16, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
+                graphics.blit(logoResource, left + 4, top + 3, 16, 16, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
                 RenderSystem.disableBlend();
             }
             else
@@ -764,7 +781,7 @@ public class CatalogueModListScreen extends Screen
                 // for null pointers. Switches the icon to a grass block if an exception occurs.
                 try
                 {
-                    graphics.renderFakeItem(this.icon, left + 4, top + 2);
+                    graphics.renderFakeItem(this.icon, left + 4, top + 3);
                 }
                 catch(Exception e)
                 {

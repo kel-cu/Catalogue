@@ -4,8 +4,9 @@ plugins {
     id 'maven-publish'
 }
 
-archivesBaseName = "${mod_id}-common"
-version = "${minecraft_version}-${mod_version}"
+base {
+    archivesName = "${mod_id}-common"
+}
 
 minecraft {
     version(minecraft_version)
@@ -18,13 +19,6 @@ configurations {
 dependencies {
     compileOnly "org.spongepowered:mixin:0.8.5"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
-}
-
-processResources {
-    def buildProps = project.properties.clone()
-    filesMatching(['pack.mcmeta']) {
-        expand buildProps
-    }
 }
 
 publishing {

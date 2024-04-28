@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.VersionChecker;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
-import net.neoforged.neoforge.client.ConfigScreenHandler;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforgespi.language.IModInfo;
 
 import javax.annotation.Nullable;
@@ -139,7 +139,7 @@ public class NeoForgeModData implements IModData
     @Override
     public boolean hasConfig()
     {
-        return ConfigScreenHandler.getScreenFactoryFor(this.info).isPresent();
+        return IConfigScreenFactory.getForMod(this.info).isPresent();
     }
 
     @Override
@@ -157,7 +157,7 @@ public class NeoForgeModData implements IModData
     @Override
     public void openConfigScreen(Screen parent)
     {
-        ConfigScreenHandler.getScreenFactoryFor(this.info).map(f -> f.apply(Minecraft.getInstance(), parent)).ifPresent(newScreen -> Minecraft.getInstance().setScreen(newScreen));
+        IConfigScreenFactory.getForMod(this.info).map(f -> f.createScreen(Minecraft.getInstance(), parent)).ifPresent(newScreen -> Minecraft.getInstance().setScreen(newScreen));
     }
 
     @Override
@@ -179,7 +179,7 @@ public class NeoForgeModData implements IModData
         return switch(info.getOwningFile().getFile().getType())
         {
             case MOD -> Type.DEFAULT;
-            case LIBRARY, LANGPROVIDER, GAMELIBRARY -> Type.LIBRARY;
+            case LIBRARY, GAMELIBRARY -> Type.LIBRARY;
         };
     }
 }

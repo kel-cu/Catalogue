@@ -122,7 +122,7 @@ public class CatalogueModListScreen extends Screen
         this.modList.setRenderHeader(false, 0);
         this.addWidget(this.modList);
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, btn -> {
-            this.minecraft.setScreen(null);
+            this.minecraft.setScreen(this.parentScreen);
         }).pos(10, this.modList.getBottom() + 8).size(127, 20).build());
         this.modFolderButton = this.addRenderableWidget(new CatalogueIconButton(140, this.modList.getBottom() + 8, 0, 0, onPress -> {
             Util.getPlatform().openFile(ClientServices.PLATFORM.getModDirectory());

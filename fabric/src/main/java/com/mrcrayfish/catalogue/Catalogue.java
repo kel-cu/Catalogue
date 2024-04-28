@@ -1,6 +1,7 @@
 package com.mrcrayfish.catalogue;
 
 import com.google.common.collect.ImmutableMap;
+import com.mrcrayfish.catalogue.client.Config;
 import com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen;
 import com.mrcrayfish.catalogue.client.screen.widget.CatalogueIconButton;
 import net.fabricmc.api.ClientModInitializer;
@@ -10,12 +11,16 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,23 +37,29 @@ public class Catalogue implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
+        Config.load(FabricLoaderImpl.INSTANCE.getConfigDir());
+
         Catalogue.providers = this.findConfigFactoryProviders();
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) ->
         {
-            if(screen instanceof TitleScreen)
+            if(Config.isTitleMenuVisible() && screen instanceof TitleScreen)
             {
-                int x = screen.width / 2;
-                int y = screen.height / 4 + 48;
-                Button modButton = new CatalogueIconButton(x - 124, y + 48, 30, 0, button -> client.setScreen(new CatalogueModListScreen(screen)));
+                AbstractWidget widget = this.findTitleTarget(screen);
+                int x = widget != null ? widget.getX() : screen.width / 2 - 124;
+                int y = widget != null ? widget.getY() : screen.height / 4 + 48 + 48;
+                if(widget != null) x += Config.getTitleMenuAlign() == Config.Align.LEFT ? -24 : widget.getWidth() + 24;
+                Button modButton = new CatalogueIconButton(x, y, 30, 0, button -> client.setScreen(new CatalogueModListScreen(screen)));
                 modButton.setTooltip(Tooltip.create(Component.translatable("catalogue.gui.mod_list")));
                 Screens.getButtons(screen).add(modButton);
             }
-            else if(screen instanceof PauseScreen)
+            else if(Config.isPauseMenuVisible() && screen instanceof PauseScreen)
             {
-                int x = screen.width / 2;
-                int y = screen.height / 4 + 32;
-                Button modButton = new CatalogueIconButton(x - 124, y + 48, 30, 0, button -> client.setScreen(new CatalogueModListScreen(screen)));
+                AbstractWidget widget = this.findPauseTarget(screen);
+                int x = widget != null ? widget.getX() : screen.width / 2 - 124;
+                int y = widget != null ? widget.getY() : screen.height / 4 + 32 + 48;
+                if(widget != null) x += Config.getPauseMenuAlign() == Config.Align.LEFT ? -24 : widget.getWidth() + 24;
+                Button modButton = new CatalogueIconButton(x, y, 30, 0, button -> client.setScreen(new CatalogueModListScreen(screen)));
                 modButton.setTooltip(Tooltip.create(Component.translatable("catalogue.gui.mod_list")));
                 Screens.getButtons(screen).add(modButton);
             }
@@ -166,5 +177,63 @@ public class Catalogue implements ClientModInitializer
             // Method is optional
         }
         return Optional.empty();
+    }
+
+    private AbstractWidget findTitleTarget(Screen screen)
+    {
+        String targetLang = this.getTitleTargetLang(Config.getTitleMenuTarget());
+        return this.findTarget(screen, targetLang);
+    }
+
+    private AbstractWidget findPauseTarget(Screen screen)
+    {
+        String targetLang = this.getPauseTargetLang(Config.getPauseMenuTarget());
+        return this.findTarget(screen, targetLang);
+    }
+
+    private AbstractWidget findTarget(Screen screen, String langTarget)
+    {
+        return screen.children().stream()
+            .filter(listener -> listener instanceof AbstractWidget)
+            .map(listener -> (AbstractWidget) listener)
+            .filter(listener -> {
+                if(listener instanceof Button btn) {
+                    if(btn.getMessage() instanceof MutableComponent component) {
+                        if(component.getContents() instanceof TranslatableContents contents) {
+                            return contents.getKey().equals(langTarget);
+                        }
+                    }
+                }
+                return false;
+            })
+            .findFirst()
+            .orElse(null);
+    }
+
+    private String getTitleTargetLang(Config.TitleMenuTargets target)
+    {
+        return switch(target) {
+            case SINGLE_PLAYER -> "menu.singleplayer";
+            case MULTIPLAYER -> "menu.multiplayer";
+            case REALMS -> "menu.online";
+            case LANGUAGE -> "options.language";
+            case OPTIONS -> "menu.options";
+            case QUIT_GAME -> "menu.quit";
+            case ACCESSIBILITY -> "options.accessibility";
+        };
+    }
+
+    private String getPauseTargetLang(Config.PauseMenuTargets target)
+    {
+        return switch(target) {
+            case RETURN_TO_GAME -> "menu.returnToGame";
+            case ADVANCEMENTS -> "gui.advancements";
+            case FEEDBACK -> "menu.sendFeedback";
+            case OPTIONS -> "menu.options";
+            case STATISTICS -> "gui.stats";
+            case REPORT_BUGS -> "menu.reportBugs";
+            case OPEN_TO_LAN -> "menu.shareToLan";
+            case SAVE_AND_QUIT -> "menu.returnToMenu";
+        };
     }
 }

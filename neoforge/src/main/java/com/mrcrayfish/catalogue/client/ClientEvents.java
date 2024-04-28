@@ -5,7 +5,6 @@ import com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.ModListScreen;
 
@@ -13,7 +12,7 @@ import net.neoforged.neoforge.client.gui.ModListScreen;
  * Author: MrCrayfish
  */
 @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
-public class ClientHandler
+public class ClientEvents
 {
     @SubscribeEvent
     public static void onOpenScreen(ScreenEvent.Opening event)

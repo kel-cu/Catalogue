@@ -71,6 +71,7 @@ public class CatalogueModListScreen extends Screen
     private static final Map<String, IModData> CACHED_MODS = new HashMap<>();
     private static ResourceLocation cachedBackground;
     private static boolean loaded = false;
+    private static String lastSearch = "";
 
     private final Screen parentScreen;
     private EditBox searchTextField;
@@ -108,10 +109,12 @@ public class CatalogueModListScreen extends Screen
     {
         super.init();
         this.searchTextField = new EditBox(this.font, 10, 25, 150, 20, CommonComponents.EMPTY);
+        this.searchTextField.setValue(lastSearch);
         this.searchTextField.setResponder(s -> {
             this.updateSearchField(s);
             this.modList.filterAndUpdateList(s);
             this.updateSelectedModList();
+            lastSearch = s;
         });
         this.addWidget(this.searchTextField);
         this.modList = new ModList();

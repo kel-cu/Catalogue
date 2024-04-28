@@ -62,6 +62,7 @@ public class CatalogueModListScreen extends Screen
 {
     private static final Comparator<ModListEntry> SORT = Comparator.comparing(o -> o.getData().getDisplayName());
     private static final ResourceLocation MISSING_BANNER = new ResourceLocation(Constants.MOD_ID, "textures/gui/missing_banner.png");
+    private static final ResourceLocation MISSING_BACKGROUND = new ResourceLocation(Constants.MOD_ID, "textures/gui/missing_background.png");
     private static final Map<String, Pair<ResourceLocation, Dimension>> BANNER_CACHE = new HashMap<>();
     private static final Map<String, Pair<ResourceLocation, Dimension>> IMAGE_ICON_CACHE = new HashMap<>();
     private static final Map<String, Item> ITEM_ICON_CACHE = new HashMap<>();
@@ -461,11 +462,9 @@ public class CatalogueModListScreen extends Screen
         if(this.selectedModData == null)
             return;
 
-        if(cachedBackground == null)
-            return;
-
+        ResourceLocation texture = cachedBackground != null ? cachedBackground : MISSING_BACKGROUND;
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
-        RenderSystem.setShaderTexture(0, cachedBackground);
+        RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         Matrix4f matrix = graphics.pose().last().pose();

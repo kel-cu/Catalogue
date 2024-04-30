@@ -14,7 +14,7 @@ import net.neoforged.fml.loading.FMLPaths;
 public class ClientCatalogue
 {
     @SubscribeEvent
-    private void onClientSetup(FMLClientSetupEvent event)
+    private static void onClientSetup(FMLClientSetupEvent event)
     {
         Config.load(FMLPaths.CONFIGDIR.get());
     }

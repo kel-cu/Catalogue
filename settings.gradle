@@ -25,4 +25,7 @@ plugins {
 }
 
 rootProject.name = 'Catalogue'
-include("common", "fabric", "neoforge")
+include("common")
+include("fabric")
+include("forge")
+include("neoforge")

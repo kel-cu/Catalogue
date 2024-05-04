@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
 }
 
 base {
@@ -13,7 +13,7 @@ base {
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
-
+    reobf = false
     copyIdeResources = true
 
     if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
@@ -29,7 +29,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
-                framework {
+                catalogue {
                     source sourceSets.main
                     source project(":common").sourceSets.main
                 }
@@ -60,6 +60,9 @@ configurations {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
+
+    // Temp hack fix in Forge.
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 }
 
 // Copying the same exclusion from neoforge seems to fix test mods and module issues

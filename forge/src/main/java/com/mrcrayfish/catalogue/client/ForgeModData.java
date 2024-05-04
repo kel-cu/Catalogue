@@ -108,7 +108,7 @@ public class ForgeModData implements IModData
     @Override
     public String getIssueTracker()
     {
-        return this.getConfigString("issueTrackerURL");
+        return this.info.getOwningFile().getConfig().<String>getConfigElement("issueTrackerURL").orElse(null);
     }
 
     @Nullable

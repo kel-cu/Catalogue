@@ -76,8 +76,6 @@ tasks.withType(ProcessResources).matching(notForge).configureEach {
     from project(":common").sourceSets.main.resources
 }
 
-jar.finalizedBy('reobfJar', 'signJar')
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -138,6 +136,8 @@ tasks.register('signJar', SignJar) {
     storePass = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
     inputFile = outputFile = jar.archiveFile
 }
+
+jar.finalizedBy 'signJar'
 
 sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")

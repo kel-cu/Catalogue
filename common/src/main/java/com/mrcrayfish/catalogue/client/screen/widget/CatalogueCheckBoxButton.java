@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class CatalogueCheckBoxButton extends AbstractButton
 {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/checkbox.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/checkbox.png");
 
     private final OnPress onPress;
     private boolean selected;

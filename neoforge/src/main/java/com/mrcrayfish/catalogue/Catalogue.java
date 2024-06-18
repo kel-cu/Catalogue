@@ -1,8 +1,6 @@
 package com.mrcrayfish.catalogue;
 
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 /**
  * Author: MrCrayfish

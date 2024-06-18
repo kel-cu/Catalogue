@@ -47,7 +47,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -63,8 +63,8 @@ import java.util.stream.Collectors;
 public class CatalogueModListScreen extends Screen
 {
     private static final Comparator<ModListEntry> SORT = Comparator.comparing(o -> o.getData().getDisplayName());
-    private static final ResourceLocation MISSING_BANNER = new ResourceLocation(Constants.MOD_ID, "textures/gui/missing_banner.png");
-    private static final ResourceLocation MISSING_BACKGROUND = new ResourceLocation(Constants.MOD_ID, "textures/gui/missing_background.png");
+    private static final ResourceLocation MISSING_BANNER = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/missing_banner.png");
+    private static final ResourceLocation MISSING_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/missing_background.png");
     private static final Map<String, Pair<ResourceLocation, Dimension>> BANNER_CACHE = new HashMap<>();
     private static final Map<String, Pair<ResourceLocation, Dimension>> IMAGE_ICON_CACHE = new HashMap<>();
     private static final Map<String, Item> ITEM_ICON_CACHE = new HashMap<>();
@@ -476,18 +476,17 @@ public class CatalogueModListScreen extends Screen
             return;
 
         ResourceLocation texture = cachedBackground != null ? cachedBackground : MISSING_BACKGROUND;
-        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         Matrix4f matrix = graphics.pose().last().pose();
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-        builder.vertex(matrix, x, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(0, 0).endVertex();
-        builder.vertex(matrix, x, y + 128, 0).color(0.0F, 0.0F, 0.0F, 0.0F).uv(0, 1).endVertex();
-        builder.vertex(matrix, x + contentWidth, y + 128, 0).color(0.0F, 0.0F, 0.0F, 0.0F).uv(1, 1).endVertex();
-        builder.vertex(matrix, x + contentWidth, y, 0).color(1.0F, 1.0F, 1.0F, 1.0F).uv(1, 0).endVertex();
-        BufferUploader.drawWithShader(builder.end());
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        builder.addVertex(matrix, x, y, 0).setUv(0, 0).setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        builder.addVertex(matrix, x, y + 128, 0).setUv(0, 1).setColor(0.0F, 0.0F, 0.0F, 0.0F);
+        builder.addVertex(matrix, x + contentWidth, y + 128, 0).setUv(1, 1).setColor(0.0F, 0.0F, 0.0F, 0.0F);
+        builder.addVertex(matrix, x + contentWidth, y, 0).setUv(1, 0).setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        BufferUploader.drawWithShader(builder.buildOrThrow());
         RenderSystem.disableBlend();
     }
 

@@ -1,8 +1,8 @@
 package com.mrcrayfish.catalogue.client;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

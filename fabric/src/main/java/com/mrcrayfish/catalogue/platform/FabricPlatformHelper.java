@@ -1,9 +1,9 @@
 package com.mrcrayfish.catalogue.platform;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mrcrayfish.catalogue.client.FabricModData;
 import com.mrcrayfish.catalogue.client.IModData;
 import com.mrcrayfish.catalogue.platform.services.IPlatformHelper;
-import com.mojang.blaze3d.platform.NativeImage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;

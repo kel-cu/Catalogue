@@ -13,6 +13,9 @@ logoFile="assets/${mod_id}/banner.png"
 logoBlur=false
 authors="${mod_author}"
 description="${mod_desc}"
+[modproperties."${mod_id}"]
+    catalogueImageIcon="assets/${mod_id}/icon.png"
+    catalogueBackground="assets/${mod_id}/background.png"
 
 [[dependencies."${mod_id}"]]
     modId="forge"
@@ -27,8 +30,3 @@ description="${mod_desc}"
     versionRange="[${minecraft_version},)"
     ordering="NONE"
     side="BOTH"
-
-[modproperties."${mod_id}"]
-    catalogueImageIcon="assets/${mod_id}/icon.png"
-    catalogueBackground="assets/${mod_id}/background.png"
-    configuredBackground="minecraft:textures/block/stone.png"

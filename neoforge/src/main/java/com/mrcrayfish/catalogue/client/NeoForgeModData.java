@@ -10,14 +10,14 @@ import net.neoforged.fml.loading.moddiscovery.ModInfo;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforgespi.language.IModInfo;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: MrCrayfish
  */
 public class NeoForgeModData implements IModData
 {
-    public static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation("neoforge", "textures/gui/version_check_icons.png");
+    public static final ResourceLocation VERSION_CHECK_ICONS = ResourceLocation.fromNamespaceAndPath("neoforge", "textures/gui/version_check_icons.png");
 
     private final IModInfo info;
     private final Type type;

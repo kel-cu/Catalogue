@@ -4,8 +4,8 @@ import com.mrcrayfish.catalogue.client.IModData;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import org.jetbrains.annotations.Nullable;
 
 /**

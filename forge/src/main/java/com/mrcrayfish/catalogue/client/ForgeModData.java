@@ -8,16 +8,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Author: MrCrayfish
  */
 public class ForgeModData implements IModData
 {
-    public static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation("forge", "textures/gui/version_check_icons.png");
+    public static final ResourceLocation VERSION_CHECK_ICONS = ResourceLocation.fromNamespaceAndPath("forge", "textures/gui/version_check_icons.png");
 
     private final IModInfo info;
     private final Type type;
@@ -122,7 +125,12 @@ public class ForgeModData implements IModData
     @Override
     public String getBackground()
     {
-        return this.info.getModProperties().get("catalogueBackground") instanceof String s ? s : null;
+        Object properties = this.info.getOwningFile().getConfig().getConfigElement("modproperties", this.info.getModId());
+        if(properties != null)
+        {
+            //.get("catalogueBackground")
+        }
+        return null;
     }
 
     @Override

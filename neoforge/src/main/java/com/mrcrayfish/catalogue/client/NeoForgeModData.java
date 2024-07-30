@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.VersionChecker;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -165,7 +166,11 @@ public class NeoForgeModData implements IModData
     @Override
     public void openConfigScreen(Screen parent)
     {
-        IConfigScreenFactory.getForMod(this.info).map(f -> f.createScreen(Minecraft.getInstance(), parent)).ifPresent(newScreen -> Minecraft.getInstance().setScreen(newScreen));
+        ModList.get()
+            .getModContainerById(this.info.getModId())
+            .flatMap(container -> IConfigScreenFactory.getForMod(this.info)
+                .map(f -> f.createScreen(container, parent)))
+            .ifPresent(newScreen -> Minecraft.getInstance().setScreen(newScreen));
     }
 
     @Override

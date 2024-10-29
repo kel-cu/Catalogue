@@ -12,6 +12,6 @@ public class Catalogue
 {
     public Catalogue()
     {
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, IExtensionPoint.DisplayTest.IGNORE_SERVER_VERSION);
+//        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, IExtensionPoint.DisplayTest.IGNORE_SERVER_VERSION);
     }
 }

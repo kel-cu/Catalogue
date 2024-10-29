@@ -26,7 +26,7 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -56,6 +56,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static net.minecraft.client.renderer.CoreShaders.POSITION_TEX_COLOR;
 
 /**
  * Author: MrCrayfish
@@ -205,7 +207,7 @@ public class CatalogueModListScreen extends Screen
             ResourceLocation textureId = pair.getLeft();
             Dimension size = pair.getRight();
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(textureId, 10, 9, 10, 10, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
+            graphics.blit(RenderType::guiTextured, textureId, 10, 9, 0, 0, 10, 10, size.width, size.height, size.width, size.height);
         }
 
         if(ClientHelper.isMouseWithin(10, 9, 10, 10, mouseX, mouseY))
@@ -476,7 +478,7 @@ public class CatalogueModListScreen extends Screen
             return;
 
         ResourceLocation texture = cachedBackground != null ? cachedBackground : MISSING_BACKGROUND;
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShader(POSITION_TEX_COLOR);
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
@@ -551,7 +553,7 @@ public class CatalogueModListScreen extends Screen
                 y += 8;
             }
 
-            graphics.blit(logoResource, x, y, width, height, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
+            graphics.blit(RenderType::guiTextured, logoResource, x, y, 0, 0, width, height, size.width, size.height, size.width, size.height);
 
             RenderSystem.disableBlend();
         }
@@ -733,10 +735,10 @@ public class CatalogueModListScreen extends Screen
         @Override
         public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
         {
-            graphics.setColor(0.125F, 0.125F, 0.125F, 1.0F);
+//            graphics.setColor(0.125F, 0.125F, 0.125F, 1.0F);
             // TODO what appened
             //graphics.blit(Screen.BACKGROUND_LOCATION, this.getX(), this.getY(), this.getRight(), this.getBottom() + (int) this.getScrollAmount(), this.width, this.height, 32, 32);
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+//            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             super.renderWidget(graphics, mouseX, mouseY, partialTicks);
         }
 
@@ -807,7 +809,7 @@ public class CatalogueModListScreen extends Screen
 
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.enableBlend();
-                graphics.blit(logoResource, left + 4, top + 3, 16, 16, 0.0F, 0.0F, size.width, size.height, size.width, size.height);
+                graphics.blit(RenderType::guiTextured, logoResource, left + 4, top + 3, 0, 0, 16, 16, size.width, size.height, size.width, size.height);
                 RenderSystem.disableBlend();
             }
             else
@@ -859,7 +861,7 @@ public class CatalogueModListScreen extends Screen
                 ResourceLocation resource = ResourceLocation.tryParse(itemIcon);
                 if(resource != null)
                 {
-                    Item item = BuiltInRegistries.ITEM.get(resource);
+                    Item item = BuiltInRegistries.ITEM.get(resource).get().value();
                     if(item != null && item != Items.AIR)
                     {
                         ITEM_ICON_CACHE.put(this.data.getModId(), item);
@@ -979,7 +981,7 @@ public class CatalogueModListScreen extends Screen
         }
 
         @Override
-        protected int getRowTop(int $$0)
+        public int getRowTop(int $$0)
         {
             return super.getRowTop($$0) + 4;
         }

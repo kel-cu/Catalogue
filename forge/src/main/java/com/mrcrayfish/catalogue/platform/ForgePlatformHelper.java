@@ -7,6 +7,7 @@ import com.mrcrayfish.catalogue.client.IModData;
 import com.mrcrayfish.catalogue.platform.services.IPlatformHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.fml.ModList;
@@ -75,6 +76,6 @@ public class ForgePlatformHelper implements IPlatformHelper
     public void drawUpdateIcon(GuiGraphics graphics, int x, int y)
     {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(ForgeModData.VERSION_CHECK_ICONS, x, y, 24, 0, 8, 8, 64, 16);
+        graphics.blit(RenderType::guiTextured, ForgeModData.VERSION_CHECK_ICONS, x, y, 24, 0, 8, 8, 64, 16);
     }
 }
